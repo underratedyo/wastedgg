@@ -1,4 +1,3 @@
--- UI Library v1.0 - Smooth, Rounded, Purple-Black Gradient with Tabs & Credits
 local UI = {}
 UI.__index = UI
 
@@ -6,23 +5,19 @@ local UserInputService = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
 local Players = game:GetService("Players")
 
--- ==========================================================
--- CREDITS CONFIGURATION (EDIT YOUR 2 CREDITS HERE)
--- ==========================================================
 local CreditsData = {
     {
         Name = "Bratic",
         Description = "Love Everyone With a Purpose.",
-        Image = "rbxassetid://0", -- Replace 0 with your Roblox Decal/Image Asset ID (e.g. "rbxassetid://12345678")
+        Image = "rbxassetid://0",
     },
     {
         Name = "Luci",
         Description = "One of Bratics Besties, Lucistrap Owner",
-        Image = "rbxassetid://0", -- Replace 0 with your Roblox Decal/Image Asset ID
+        Image = "rbxassetid://0",
     }
 }
 
--- THEME CONFIG
 local Theme = {
     MainBg = Color3.fromRGB(20, 20, 28),
     SidebarBg = Color3.fromRGB(15, 15, 22),
@@ -35,7 +30,6 @@ local Theme = {
     GradientEnd = Color3.fromRGB(10, 10, 18),
 }
 
--- HELPER: Create gradient frame
 local function CreateGradientFrame(parent, size, pos, zIndex)
     local frame = Instance.new("Frame")
     frame.Size = size or UDim2.new(1, 0, 1, 0)
@@ -60,7 +54,6 @@ local function CreateGradientFrame(parent, size, pos, zIndex)
     return frame
 end
 
--- HELPER: Create label
 local function CreateLabel(parent, text, size, pos, font, sizeVal, align, color)
     local label = Instance.new("TextLabel")
     label.Size = size or UDim2.new(1, 0, 1, 0)
@@ -77,7 +70,6 @@ local function CreateLabel(parent, text, size, pos, font, sizeVal, align, color)
     return label
 end
 
--- HELPER: Create button
 local function CreateButton(parent, text, size, pos, callback)
     local button = Instance.new("TextButton")
     button.Size = size or UDim2.new(1, 0, 0, 35)
@@ -105,7 +97,6 @@ local function CreateButton(parent, text, size, pos, callback)
     return button
 end
 
--- HELPER: Create toggle
 local function CreateToggle(parent, text, defaultValue, callback)
     local state = defaultValue or false
 
@@ -160,7 +151,6 @@ local function CreateToggle(parent, text, defaultValue, callback)
     return container
 end
 
--- HELPER: Create slider
 local function CreateSlider(parent, text, min, max, defaultValue, callback)
     min = min or 0
     max = max or 100
@@ -227,7 +217,6 @@ local function CreateSlider(parent, text, min, max, defaultValue, callback)
     return container
 end
 
--- HELPER: Create Screenshot-Style Credit Card
 local function CreateCreditCard(parent, data)
     local card = Instance.new("Frame")
     card.Size = UDim2.new(1, 0, 0, 65)
@@ -239,7 +228,6 @@ local function CreateCreditCard(parent, data)
     cardCorner.CornerRadius = Theme.CornerSize
     cardCorner.Parent = card
 
-    -- Avatar Image
     local avatar = Instance.new("ImageLabel")
     avatar.Size = UDim2.new(0, 45, 0, 45)
     avatar.Position = UDim2.new(0, 10, 0.5, -22)
@@ -252,16 +240,55 @@ local function CreateCreditCard(parent, data)
     avatarCorner.CornerRadius = UDim.new(0, 6)
     avatarCorner.Parent = avatar
 
-    -- Username Text
     CreateLabel(card, data.Name or "User", UDim2.new(1, -70, 0, 20), UDim2.new(0, 65, 0, 12), Enum.Font.GothamBold, 15, Enum.TextXAlignment.Left, Theme.Text)
-
-    -- Description Text
     CreateLabel(card, data.Description or "", UDim2.new(1, -70, 0, 18), UDim2.new(0, 65, 0, 32), Enum.Font.Gotham, 12, Enum.TextXAlignment.Left, Theme.Subtext)
 
     return card
 end
 
--- WINDOW CONSTRUCTOR
+local function CreateKeybind(parent, text, defaultKey, callback)
+    local keybind = defaultKey or Enum.KeyCode.RightControl
+
+    local container = Instance.new("Frame")
+    container.Size = UDim2.new(1, 0, 0, 35)
+    container.BackgroundTransparency = 1
+    container.Parent = parent
+
+    CreateLabel(container, text, UDim2.new(0, 200, 1, 0), UDim2.new(0, 0, 0, 0))
+
+    local bindButton = Instance.new("TextButton")
+    bindButton.Size = UDim2.new(0, 100, 0, 26)
+    bindButton.Position = UDim2.new(1, -100, 0.5, -13)
+    bindButton.BackgroundColor3 = Theme.CardBg
+    bindButton.BorderSizePixel = 0
+    bindButton.Text = keybind.Name
+    bindButton.TextColor3 = Theme.Text
+    bindButton.Font = Enum.Font.GothamBold
+    bindButton.TextSize = 12
+    bindButton.Parent = container
+
+    local bindCorner = Instance.new("UICorner")
+    bindCorner.CornerRadius = Theme.CornerSize
+    bindCorner.Parent = bindButton
+
+    local listening = false
+    bindButton.MouseButton1Click:Connect(function()
+        listening = true
+        bindButton.Text = "Press key..."
+    end)
+
+    UserInputService.InputBegan:Connect(function(input, gpe)
+        if listening and input.UserInputType == Enum.UserInputType.Keyboard then
+            listening = false
+            keybind = input.KeyCode
+            bindButton.Text = keybind.Name
+            if callback then callback(keybind) end
+        end
+    end)
+
+    return container
+end
+
 function UI.CreateWindow(title)
     local player = Players.LocalPlayer
     local playerGui = player:WaitForChild("PlayerGui")
@@ -273,7 +300,6 @@ function UI.CreateWindow(title)
 
     local mainFrame = CreateGradientFrame(screenGui, UDim2.new(0, 520, 0, 360), UDim2.new(0.5, -260, 0.5, -180), 1)
 
-    -- Title Bar
     local titleBar = Instance.new("Frame")
     titleBar.Size = UDim2.new(1, 0, 0, 40)
     titleBar.BackgroundTransparency = 1
@@ -281,41 +307,109 @@ function UI.CreateWindow(title)
 
     CreateLabel(titleBar, title or "UI Window", UDim2.new(1, -20, 1, 0), UDim2.new(0, 15, 0, 0), Enum.Font.GothamBold, 16)
 
-    -- SIDEBAR NAVIGATION CONTAINER
     local sidebar = Instance.new("Frame")
     sidebar.Size = UDim2.new(0, 120, 1, -45)
     sidebar.Position = UDim2.new(0, 10, 0, 40)
     sidebar.BackgroundColor3 = Theme.SidebarBg
     sidebar.BorderSizePixel = 0
+    sidebar.ClipsDescendants = true
     sidebar.Parent = mainFrame
 
     local sidebarCorner = Instance.new("UICorner")
     sidebarCorner.CornerRadius = Theme.CornerSize
     sidebarCorner.Parent = sidebar
 
+    local toggleSidebarBtn = Instance.new("TextButton")
+    toggleSidebarBtn.Size = UDim2.new(0, 30, 0, 25)
+    toggleSidebarBtn.Position = UDim2.new(1, -35, 0, 5)
+    toggleSidebarBtn.BackgroundTransparency = 1
+    toggleSidebarBtn.Text = "≡"
+    toggleSidebarBtn.TextColor3 = Theme.Text
+    toggleSidebarBtn.Font = Enum.Font.GothamBold
+    toggleSidebarBtn.TextSize = 20
+    toggleSidebarBtn.Parent = sidebar
+
+    local sidebarContainer = Instance.new("Frame")
+    sidebarContainer.Size = UDim2.new(1, 0, 1, -35)
+    sidebarContainer.Position = UDim2.new(0, 0, 0, 35)
+    sidebarContainer.BackgroundTransparency = 1
+    sidebarContainer.Parent = sidebar
+
     local sidebarLayout = Instance.new("UIListLayout")
     sidebarLayout.Padding = UDim.new(0, 5)
     sidebarLayout.SortOrder = Enum.SortOrder.LayoutOrder
-    sidebarLayout.Parent = sidebar
+    sidebarLayout.Parent = sidebarContainer
 
     local sidebarPadding = Instance.new("UIPadding")
-    sidebarPadding.PaddingTop = UDim.new(0, 5)
     sidebarPadding.PaddingLeft = UDim.new(0, 5)
     sidebarPadding.PaddingRight = UDim.new(0, 5)
-    sidebarPadding.Parent = sidebar
+    sidebarPadding.Parent = sidebarContainer
 
-    -- CONTENT AREA CONTAINER
     local contentArea = Instance.new("Frame")
     contentArea.Size = UDim2.new(1, -150, 1, -45)
     contentArea.Position = UDim2.new(0, 140, 0, 40)
     contentArea.BackgroundTransparency = 1
     contentArea.Parent = mainFrame
 
-    local tabs = {}
-    local activeTab = nil
+    local sidebarOpen = true
+    toggleSidebarBtn.MouseButton1Click:Connect(function()
+        sidebarOpen = not sidebarOpen
+        local targetWidth = sidebarOpen and 120 or 40
+        local targetContentPos = sidebarOpen and 140 or 60
+        local targetContentWidth = sidebarOpen and -150 or -70
 
-    -- TAB CREATOR METHOD
-    local WindowAPI = {}
+        TweenService:Create(sidebar, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Size = UDim2.new(0, targetWidth, 1, -45)}):Play()
+        TweenService:Create(contentArea, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+            Position = UDim2.new(0, targetContentPos, 0, 40),
+            Size = UDim2.new(1, targetContentWidth, 1, -45)
+        }):Play()
+    end)
+
+    local resizeHandle = Instance.new("Frame")
+    resizeHandle.Size = UDim2.new(0, 15, 0, 15)
+    resizeHandle.Position = UDim2.new(1, -15, 1, -15)
+    resizeHandle.BackgroundTransparency = 1
+    resizeHandle.Parent = mainFrame
+
+    local resizeLines = Instance.new("TextLabel")
+    resizeLines.Size = UDim2.new(1, 0, 1, 0)
+    resizeLines.BackgroundTransparency = 1
+    resizeLines.Text = "◢"
+    resizeLines.TextColor3 = Theme.Subtext
+    resizeLines.TextSize = 12
+    resizeLines.Font = Enum.Font.Gotham
+    resizeLines.TextXAlignment = Enum.TextXAlignment.Right
+    resizeLines.TextYAlignment = Enum.TextYAlignment.Bottom
+    resizeLines.Parent = resizeHandle
+
+    local resizing = false
+    local resizeStart, startSize
+
+    resizeHandle.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            resizing = true
+            resizeStart = input.Position
+            startSize = mainFrame.Size
+        end
+    end)
+
+    resizeHandle.InputEnded:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            resizing = false
+        end
+    end)
+
+    UserInputService.InputChanged:Connect(function(input)
+        if resizing and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+            local delta = input.Position - resizeStart
+            local newX = math.max(380, startSize.X.Offset + delta.X)
+            local newY = math.max(250, startSize.Y.Offset + delta.Y)
+            mainFrame.Size = UDim2.new(0, newX, 0, newY)
+        end
+    end)
+
+    local tabs = {}
+    local WindowAPI = {ScreenGui = screenGui}
 
     function WindowAPI:CreateTab(tabName)
         local tabButton = Instance.new("TextButton")
@@ -327,7 +421,8 @@ function UI.CreateWindow(title)
         tabButton.Font = Enum.Font.GothamBold
         tabButton.TextSize = 13
         tabButton.BorderSizePixel = 0
-        tabButton.Parent = sidebar
+        tabButton.ClipsDescendants = true
+        tabButton.Parent = sidebarContainer
 
         local btnCorner = Instance.new("UICorner")
         btnCorner.CornerRadius = Theme.CornerSize
@@ -362,7 +457,6 @@ function UI.CreateWindow(title)
             tabButton.TextColor3 = Theme.Text
         end)
 
-        -- Select the first tab automatically
         if #tabs == 0 then
             tabContent.Visible = true
             tabButton.BackgroundTransparency = 0
@@ -371,7 +465,6 @@ function UI.CreateWindow(title)
 
         table.insert(tabs, {Button = tabButton, Content = tabContent})
 
-        -- Tab Specific Controls API
         local TabAPI = {}
         function TabAPI:AddButton(text, callback)
             return CreateButton(tabContent, text, nil, nil, callback)
@@ -388,11 +481,13 @@ function UI.CreateWindow(title)
         function TabAPI:AddCreditCard(data)
             return CreateCreditCard(tabContent, data)
         end
+        function TabAPI:AddKeybind(text, defaultKey, callback)
+            return CreateKeybind(tabContent, text, defaultKey, callback)
+        end
 
         return TabAPI
     end
 
-    -- Draggable Window Math
     local dragging, dragInput, dragStart, startPos
     titleBar.InputBegan:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
@@ -424,14 +519,8 @@ function UI.CreateWindow(title)
     return WindowAPI
 end
 
-
--- ==========================================================
--- UI SETUP & INITIALIZATION
--- ==========================================================
-
 local Window = UI.CreateWindow("Purple Gradient Hub")
 
--- 1. MAIN TAB (Side Button #1)
 local MainTab = Window:CreateTab("Main")
 MainTab:AddLabel("Main Player Features")
 
@@ -450,11 +539,23 @@ MainTab:AddSlider("WalkSpeed", 16, 100, 16, function(value)
     end
 end)
 
--- 2. CREDITS TAB (Side Button #2)
 local CreditsTab = Window:CreateTab("Credits")
 CreditsTab:AddLabel("Main Contributors")
 
--- Loops through the CreditsData table at the top of the script
 for _, contributor in ipairs(CreditsData) do
     CreditsTab:AddCreditCard(contributor)
 end
+
+local SettingsTab = Window:CreateTab("Settings")
+SettingsTab:AddLabel("UI Settings")
+
+local toggleKey = Enum.KeyCode.RightControl
+SettingsTab:AddKeybind("Toggle UI Keybind", toggleKey, function(newKey)
+    toggleKey = newKey
+end)
+
+UserInputService.InputBegan:Connect(function(input, gpe)
+    if not gpe and input.KeyCode == toggleKey then
+        Window.ScreenGui.Enabled = not Window.ScreenGui.Enabled
+    end
+end)
