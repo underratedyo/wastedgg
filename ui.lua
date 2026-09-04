@@ -7,28 +7,28 @@ local Players = game:GetService("Players")
 
 local CreditsData = {
     {
-        Name = "@weakprms",
-        Description = "Main ui scripter",
+        Name = "Bratic",
+        Description = "Love Everyone With a Purpose.",
         Image = "rbxassetid://0",
     },
     {
-        Name = "mercyxz",
-        Description = "wasted.gg founder",
+        Name = "Luci",
+        Description = "One of Bratics Besties, Lucistrap Owner",
         Image = "rbxassetid://0",
     }
 }
 
 local Theme = {
-    MainBg = Color3.fromRGB(20, 20, 28),
-    SidebarBg = Color3.fromRGB(15, 15, 22),
-    CardBg = Color3.fromRGB(35, 35, 48),
-    Accent = Color3.fromRGB(147, 51, 234),
+    MainBg = Color3.fromRGB(15, 12, 24),
+    SidebarBg = Color3.fromRGB(12, 10, 20),
+    CardBg = Color3.fromRGB(30, 24, 45),
+    Accent = Color3.fromRGB(160, 50, 240),
     Text = Color3.fromRGB(255, 255, 255),
-    Subtext = Color3.fromRGB(170, 170, 190),
-    Border = Color3.fromRGB(45, 45, 60),
+    Subtext = Color3.fromRGB(180, 175, 205),
+    Border = Color3.fromRGB(75, 40, 110),
     CornerSize = UDim.new(0, 8),
-    GradientStart = Color3.fromRGB(50, 18, 100),
-    GradientEnd = Color3.fromRGB(10, 10, 18),
+    GradientStart = Color3.fromRGB(85, 20, 140),
+    GradientEnd = Color3.fromRGB(8, 6, 14),
 }
 
 local function CreateGradientFrame(parent, size, pos, zIndex)
@@ -36,13 +36,14 @@ local function CreateGradientFrame(parent, size, pos, zIndex)
     frame.Size = size or UDim2.new(1, 0, 1, 0)
     frame.Position = pos or UDim2.new(0, 0, 0, 0)
     frame.ZIndex = zIndex or 1
-    frame.BackgroundColor3 = Theme.MainBg
+    frame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
     frame.BorderSizePixel = 0
     frame.Parent = parent
 
     local gradient = Instance.new("UIGradient")
     gradient.Color = ColorSequence.new{
         ColorSequenceKeypoint.new(0, Theme.GradientStart),
+        ColorSequenceKeypoint.new(0.45, Color3.fromRGB(35, 14, 60)),
         ColorSequenceKeypoint.new(1, Theme.GradientEnd)
     }
     gradient.Rotation = 45
@@ -51,6 +52,12 @@ local function CreateGradientFrame(parent, size, pos, zIndex)
     local corner = Instance.new("UICorner")
     corner.CornerRadius = Theme.CornerSize
     corner.Parent = frame
+
+    local stroke = Instance.new("UIStroke")
+    stroke.Color = Theme.Border
+    stroke.Thickness = 1.2
+    stroke.Transparency = 0.3
+    stroke.Parent = frame
 
     return frame
 end
@@ -111,7 +118,7 @@ local function CreateToggle(parent, text, defaultValue, callback)
     local toggleTrack = Instance.new("Frame")
     toggleTrack.Size = UDim2.new(0, 40, 0, 20)
     toggleTrack.Position = UDim2.new(1, -40, 0.5, -10)
-    toggleTrack.BackgroundColor3 = state and Theme.Accent or Color3.fromRGB(50, 50, 70)
+    toggleTrack.BackgroundColor3 = state and Theme.Accent or Color3.fromRGB(40, 35, 55)
     toggleTrack.BorderSizePixel = 0
     toggleTrack.Parent = container
 
@@ -137,7 +144,7 @@ local function CreateToggle(parent, text, defaultValue, callback)
     clickOverlay.Parent = container
 
     local function updateToggle(isOn)
-        local targetColor = isOn and Theme.Accent or Color3.fromRGB(50, 50, 70)
+        local targetColor = isOn and Theme.Accent or Color3.fromRGB(40, 35, 55)
         local targetPos = isOn and UDim2.new(0, 22, 0, 2) or UDim2.new(0, 2, 0, 2)
         TweenService:Create(toggleTrack, TweenInfo.new(0.2), {BackgroundColor3 = targetColor}):Play()
         TweenService:Create(toggleButton, TweenInfo.new(0.2), {Position = targetPos}):Play()
@@ -168,7 +175,7 @@ local function CreateSlider(parent, text, min, max, defaultValue, callback)
     local sliderTrack = Instance.new("Frame")
     sliderTrack.Size = UDim2.new(1, 0, 0, 8)
     sliderTrack.Position = UDim2.new(0, 0, 1, -12)
-    sliderTrack.BackgroundColor3 = Color3.fromRGB(50, 50, 70)
+    sliderTrack.BackgroundColor3 = Color3.fromRGB(40, 35, 55)
     sliderTrack.BorderSizePixel = 0
     sliderTrack.Parent = container
 
@@ -232,7 +239,7 @@ local function CreateCreditCard(parent, data)
     local avatar = Instance.new("ImageLabel")
     avatar.Size = UDim2.new(0, 45, 0, 45)
     avatar.Position = UDim2.new(0, 10, 0.5, -22)
-    avatar.BackgroundColor3 = Color3.fromRGB(20, 20, 25)
+    avatar.BackgroundColor3 = Color3.fromRGB(20, 16, 30)
     avatar.Image = data.Image or ""
     avatar.BorderSizePixel = 0
     avatar.Parent = card
@@ -306,7 +313,17 @@ function UI.CreateWindow(title)
     titleBar.BackgroundTransparency = 1
     titleBar.Parent = mainFrame
 
-    CreateLabel(titleBar, title or "UI Window", UDim2.new(1, -60, 0, 30), UDim2.new(0, 15, 0, 2), Enum.Font.GothamBold, 16)
+    local toggleSidebarBtn = Instance.new("TextButton")
+    toggleSidebarBtn.Size = UDim2.new(0, 30, 0, 30)
+    toggleSidebarBtn.Position = UDim2.new(0, 10, 0, 4)
+    toggleSidebarBtn.BackgroundTransparency = 1
+    toggleSidebarBtn.Text = "≡"
+    toggleSidebarBtn.TextColor3 = Theme.Text
+    toggleSidebarBtn.Font = Enum.Font.GothamBold
+    toggleSidebarBtn.TextSize = 22
+    toggleSidebarBtn.Parent = titleBar
+
+    CreateLabel(titleBar, title or "UI Window", UDim2.new(1, -55, 0, 30), UDim2.new(0, 45, 0, 2), Enum.Font.GothamBold, 16)
 
     local titleDivider = Instance.new("Frame")
     titleDivider.Size = UDim2.new(1, -30, 0, 1)
@@ -315,20 +332,11 @@ function UI.CreateWindow(title)
     titleDivider.BorderSizePixel = 0
     titleDivider.Parent = titleBar
 
-    local toggleSidebarBtn = Instance.new("TextButton")
-    toggleSidebarBtn.Size = UDim2.new(0, 30, 0, 30)
-    toggleSidebarBtn.Position = UDim2.new(1, -40, 0, 4)
-    toggleSidebarBtn.BackgroundTransparency = 1
-    toggleSidebarBtn.Text = "≡"
-    toggleSidebarBtn.TextColor3 = Theme.Text
-    toggleSidebarBtn.Font = Enum.Font.GothamBold
-    toggleSidebarBtn.TextSize = 22
-    toggleSidebarBtn.Parent = titleBar
-
     local sidebar = Instance.new("Frame")
     sidebar.Size = UDim2.new(0, 120, 1, -55)
     sidebar.Position = UDim2.new(0, 10, 0, 48)
     sidebar.BackgroundColor3 = Theme.SidebarBg
+    sidebar.BackgroundTransparency = 0.2
     sidebar.BorderSizePixel = 0
     sidebar.ClipsDescendants = true
     sidebar.Parent = mainFrame
@@ -547,7 +555,7 @@ function UI.CreateWindow(title)
     return WindowAPI
 end
 
-local Window = UI.CreateWindow("Purple Gradient Hub")
+local Window = UI.CreateWindow("Wasted.gg")
 
 local MainTab = Window:CreateTab("Main")
 MainTab:AddLabel("Main Player Features")
