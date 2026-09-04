@@ -7,13 +7,13 @@ local Players = game:GetService("Players")
 
 local CreditsData = {
     {
-        Name = "Bratic",
-        Description = "Love Everyone With a Purpose.",
+        Name = "@weakprms",
+        Description = "Main ui scripter",
         Image = "rbxassetid://0",
     },
     {
-        Name = "Luci",
-        Description = "One of Bratics Besties, Lucistrap Owner",
+        Name = "mercyxz",
+        Description = "wasted.gg founder",
         Image = "rbxassetid://0",
     }
 }
