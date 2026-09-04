@@ -25,6 +25,7 @@ local Theme = {
     Accent = Color3.fromRGB(147, 51, 234),
     Text = Color3.fromRGB(255, 255, 255),
     Subtext = Color3.fromRGB(170, 170, 190),
+    Border = Color3.fromRGB(45, 45, 60),
     CornerSize = UDim.new(0, 8),
     GradientStart = Color3.fromRGB(50, 18, 100),
     GradientEnd = Color3.fromRGB(10, 10, 18),
@@ -301,15 +302,32 @@ function UI.CreateWindow(title)
     local mainFrame = CreateGradientFrame(screenGui, UDim2.new(0, 520, 0, 360), UDim2.new(0.5, -260, 0.5, -180), 1)
 
     local titleBar = Instance.new("Frame")
-    titleBar.Size = UDim2.new(1, 0, 0, 40)
+    titleBar.Size = UDim2.new(1, 0, 0, 45)
     titleBar.BackgroundTransparency = 1
     titleBar.Parent = mainFrame
 
-    CreateLabel(titleBar, title or "UI Window", UDim2.new(1, -20, 1, 0), UDim2.new(0, 15, 0, 0), Enum.Font.GothamBold, 16)
+    CreateLabel(titleBar, title or "UI Window", UDim2.new(1, -60, 0, 30), UDim2.new(0, 15, 0, 2), Enum.Font.GothamBold, 16)
+
+    local titleDivider = Instance.new("Frame")
+    titleDivider.Size = UDim2.new(1, -30, 0, 1)
+    titleDivider.Position = UDim2.new(0, 15, 0, 38)
+    titleDivider.BackgroundColor3 = Theme.Border
+    titleDivider.BorderSizePixel = 0
+    titleDivider.Parent = titleBar
+
+    local toggleSidebarBtn = Instance.new("TextButton")
+    toggleSidebarBtn.Size = UDim2.new(0, 30, 0, 30)
+    toggleSidebarBtn.Position = UDim2.new(1, -40, 0, 4)
+    toggleSidebarBtn.BackgroundTransparency = 1
+    toggleSidebarBtn.Text = "≡"
+    toggleSidebarBtn.TextColor3 = Theme.Text
+    toggleSidebarBtn.Font = Enum.Font.GothamBold
+    toggleSidebarBtn.TextSize = 22
+    toggleSidebarBtn.Parent = titleBar
 
     local sidebar = Instance.new("Frame")
-    sidebar.Size = UDim2.new(0, 120, 1, -45)
-    sidebar.Position = UDim2.new(0, 10, 0, 40)
+    sidebar.Size = UDim2.new(0, 120, 1, -55)
+    sidebar.Position = UDim2.new(0, 10, 0, 48)
     sidebar.BackgroundColor3 = Theme.SidebarBg
     sidebar.BorderSizePixel = 0
     sidebar.ClipsDescendants = true
@@ -319,19 +337,9 @@ function UI.CreateWindow(title)
     sidebarCorner.CornerRadius = Theme.CornerSize
     sidebarCorner.Parent = sidebar
 
-    local toggleSidebarBtn = Instance.new("TextButton")
-    toggleSidebarBtn.Size = UDim2.new(0, 30, 0, 25)
-    toggleSidebarBtn.Position = UDim2.new(1, -35, 0, 5)
-    toggleSidebarBtn.BackgroundTransparency = 1
-    toggleSidebarBtn.Text = "≡"
-    toggleSidebarBtn.TextColor3 = Theme.Text
-    toggleSidebarBtn.Font = Enum.Font.GothamBold
-    toggleSidebarBtn.TextSize = 20
-    toggleSidebarBtn.Parent = sidebar
-
     local sidebarContainer = Instance.new("Frame")
-    sidebarContainer.Size = UDim2.new(1, 0, 1, -35)
-    sidebarContainer.Position = UDim2.new(0, 0, 0, 35)
+    sidebarContainer.Size = UDim2.new(1, 0, 1, -10)
+    sidebarContainer.Position = UDim2.new(0, 0, 0, 5)
     sidebarContainer.BackgroundTransparency = 1
     sidebarContainer.Parent = sidebar
 
@@ -346,41 +354,61 @@ function UI.CreateWindow(title)
     sidebarPadding.Parent = sidebarContainer
 
     local contentArea = Instance.new("Frame")
-    contentArea.Size = UDim2.new(1, -150, 1, -45)
-    contentArea.Position = UDim2.new(0, 140, 0, 40)
+    contentArea.Size = UDim2.new(1, -150, 1, -55)
+    contentArea.Position = UDim2.new(0, 140, 0, 48)
     contentArea.BackgroundTransparency = 1
     contentArea.Parent = mainFrame
 
     local sidebarOpen = true
     toggleSidebarBtn.MouseButton1Click:Connect(function()
         sidebarOpen = not sidebarOpen
-        local targetWidth = sidebarOpen and 120 or 40
-        local targetContentPos = sidebarOpen and 140 or 60
-        local targetContentWidth = sidebarOpen and -150 or -70
+        local targetWidth = sidebarOpen and 120 or 0
+        local targetContentPos = sidebarOpen and 140 or 15
+        local targetContentWidth = sidebarOpen and -150 or -30
 
-        TweenService:Create(sidebar, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Size = UDim2.new(0, targetWidth, 1, -45)}):Play()
+        TweenService:Create(sidebar, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Size = UDim2.new(0, targetWidth, 1, -55)}):Play()
         TweenService:Create(contentArea, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
-            Position = UDim2.new(0, targetContentPos, 0, 40),
-            Size = UDim2.new(1, targetContentWidth, 1, -45)
+            Position = UDim2.new(0, targetContentPos, 0, 48),
+            Size = UDim2.new(1, targetContentWidth, 1, -55)
         }):Play()
     end)
 
     local resizeHandle = Instance.new("Frame")
-    resizeHandle.Size = UDim2.new(0, 15, 0, 15)
-    resizeHandle.Position = UDim2.new(1, -15, 1, -15)
+    resizeHandle.Size = UDim2.new(0, 18, 0, 18)
+    resizeHandle.Position = UDim2.new(1, -18, 1, -18)
     resizeHandle.BackgroundTransparency = 1
+    resizeHandle.ZIndex = 5
     resizeHandle.Parent = mainFrame
 
-    local resizeLines = Instance.new("TextLabel")
-    resizeLines.Size = UDim2.new(1, 0, 1, 0)
-    resizeLines.BackgroundTransparency = 1
-    resizeLines.Text = "◢"
-    resizeLines.TextColor3 = Theme.Subtext
-    resizeLines.TextSize = 12
-    resizeLines.Font = Enum.Font.Gotham
-    resizeLines.TextXAlignment = Enum.TextXAlignment.Right
-    resizeLines.TextYAlignment = Enum.TextYAlignment.Bottom
-    resizeLines.Parent = resizeHandle
+    local gripLinesFrame = Instance.new("Frame")
+    gripLinesFrame.Size = UDim2.new(1, 0, 1, 0)
+    gripLinesFrame.BackgroundTransparency = 1
+    gripLinesFrame.ZIndex = 5
+    gripLinesFrame.Parent = resizeHandle
+
+    local line1 = Instance.new("Frame")
+    line1.Size = UDim2.new(0, 14, 0, 2)
+    line1.Position = UDim2.new(1, -14, 1, -4)
+    line1.BackgroundColor3 = Theme.Subtext
+    line1.BorderSizePixel = 0
+    line1.ZIndex = 5
+    line1.Parent = gripLinesFrame
+
+    local line2 = Instance.new("Frame")
+    line2.Size = UDim2.new(0, 10, 0, 2)
+    line2.Position = UDim2.new(1, -10, 1, -8)
+    line2.BackgroundColor3 = Theme.Subtext
+    line2.BorderSizePixel = 0
+    line2.ZIndex = 5
+    line2.Parent = gripLinesFrame
+
+    local line3 = Instance.new("Frame")
+    line3.Size = UDim2.new(0, 6, 0, 2)
+    line3.Position = UDim2.new(1, -6, 1, -12)
+    line3.BackgroundColor3 = Theme.Subtext
+    line3.BorderSizePixel = 0
+    line3.ZIndex = 5
+    line3.Parent = gripLinesFrame
 
     local resizing = false
     local resizeStart, startSize
