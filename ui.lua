@@ -445,7 +445,17 @@ function UI.CreateWindow(title)
     end)
 
     local tabs = {}
-    local WindowAPI = {ScreenGui = screenGui}
+    local connections = {}
+    local WindowAPI = {ScreenGui = screenGui, Connections = connections}
+
+    function WindowAPI:Unload()
+        for _, conn in ipairs(connections) do
+            if conn and conn.Connected then
+                conn:Disconnect()
+            end
+        end
+        screenGui:Destroy()
+    end
 
     function WindowAPI:CreateTab(tabName)
         local tabButton = Instance.new("TextButton")
@@ -590,8 +600,13 @@ SettingsTab:AddKeybind("Toggle UI Keybind", toggleKey, function(newKey)
     toggleKey = newKey
 end)
 
-UserInputService.InputBegan:Connect(function(input, gpe)
+SettingsTab:AddButton("Unload UI", function()
+    Window:Unload()
+end)
+
+local toggleConn = UserInputService.InputBegan:Connect(function(input, gpe)
     if not gpe and input.KeyCode == toggleKey then
         Window.ScreenGui.Enabled = not Window.ScreenGui.Enabled
     end
 end)
+table.insert(Window.Connections, toggleConn)
